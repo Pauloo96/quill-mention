@@ -488,7 +488,7 @@ class Mention {
 
   setMentionContainerPosition_Normal() {
     const containerPos = this.quill.container.getBoundingClientRect();
-    const mentionCharPos = this.quill.getBounds(this.mentionCharPos);
+    const mentionCharPos = this.getBounds(this.mentionCharPos);
     const containerHeight = this.mentionContainer.offsetHeight;
 
     let topPos = this.options.offsetTop;
@@ -619,7 +619,7 @@ class Mention {
     this.mentionContainer.style.height = null;
 
     const containerPos = this.quill.container.getBoundingClientRect();
-    const mentionCharPos = this.quill.getBounds(this.mentionCharPos);
+    const mentionCharPos = this.getBounds(this.mentionCharPos);
     const mentionCharPosAbsolute = {
       left: containerPos.left + mentionCharPos.left,
       top: containerPos.top + mentionCharPos.top,
