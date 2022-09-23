@@ -567,6 +567,52 @@ class Mention {
     this.mentionContainer.style.left = `${leftPos}px`;
     this.mentionContainer.style.visibility = "visible";
   }
+  
+  getBounds(index, length = 0) {
+    let scrollLength = this.quill.scroll.length();
+    index = Math.min(index, scrollLength - 1);
+    length = Math.min(index + length, scrollLength - 1) - index;
+
+    let node, [leaf, offset] = this.quill.scroll.leaf(index);
+    if (leaf == null) return null;
+
+    [node, offset] = leaf.position(offset, true);
+    let range = document.createRange();
+
+    if (length > 0) {
+        range.setStart(node, offset);
+        [leaf, offset] = this.quill.scroll.leaf(index + length);
+        if (leaf == null) return null;
+        [node, offset] = leaf.position(offset, true);
+        range.setEnd(node, offset);
+        return range.getBoundingClientRect();
+    } else {
+        let side = 'left';
+        let rect;
+        if (node instanceof Text || node.nodeType == Node.TEXT_NODE) {
+            if (offset < node.data.length) {
+                range.setStart(node, offset);
+                range.setEnd(node, offset + 1);
+            } else {
+                range.setStart(node, offset - 1);
+                range.setEnd(node, offset);
+                side = 'right';
+            }
+            rect = range.getBoundingClientRect();
+        } else {
+            rect = leaf.domNode.getBoundingClientRect();
+            if (offset > 0) side = 'right';
+        }
+        return {
+            bottom: rect.top + rect.height,
+            height: rect.height,
+            left: rect[side],
+            right: rect[side],
+            top: rect.top,
+            width: 0
+        };
+    }
+}
 
   setMentionContainerPosition_Fixed() {
     this.mentionContainer.style.position = "fixed";
